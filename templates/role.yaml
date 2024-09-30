@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pv-monitor-role
+  namespace: {{ .Values.rbac.namespace }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "nodes", "persistentvolumes", "persistentvolumeclaims"]
+    verbs: ["get", "list", "watch"]

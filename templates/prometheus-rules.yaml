@@ -1,0 +1,27 @@
+{{- if eq .Values.monitoring.tool "prometheus" }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: pv-monitor-rules
+  namespace: {{ .Values.rbac.namespace }}
+spec:
+  groups:
+    - name: pv-monitor-alerts
+      rules:
+        - alert: HighDataTransferDetected
+          expr: sum(rate(pv_file_transfer_bytes[5m])) > {{ .Values.prometheus.alertThresholds.dataTransferLimit }}
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High data transfer detected on {{ $labels.volume }}"
+            description: "Volume {{ $labels.volume }} has transferred over 1GB in 5 minutes."
+        - alert: UnauthorizedFileTypeAccess
+          expr: count_over_time(pv_unauthorized_file_access_total[5m]) > {{ .Values.prometheus.alertThresholds.unauthorizedFileAccessLimit }}
+          for: 1m
+          labels:
+            severity: high
+          annotations:
+            summary: "Unauthorized file type accessed on {{ $labels.volume }}"
+            description: "An unauthorized file type was accessed on volume {{ $labels.volume }}."
+{{- end }}

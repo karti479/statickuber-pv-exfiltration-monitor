@@ -1,0 +1,111 @@
+rules:
+  # Rule for Chart.yaml
+  - name: "Ensure Helm Chart Version"
+    match:
+      kind: HelmChart
+    conditions:
+      - path: version
+        operator: exists
+      - path: apiVersion
+        operator: equals
+        value: "v2"
+    message: "Helm Chart must specify version and use apiVersion v2."
+
+  # Rule for values.yaml (image configuration)
+  - name: "Ensure Image Configuration"
+    match:
+      kind: ValuesFile
+    conditions:
+      - path: image.repository
+        operator: exists
+      - path: image.tag
+        operator: exists
+    message: "Image repository and tag must be specified in values.yaml."
+
+  # Rule for monitoring tool selection in values.yaml
+  - name: "Validate Monitoring Tool Selection"
+    match:
+      kind: ValuesFile
+    conditions:
+      - path: monitoring.tool
+        operator: in
+        value: ["prometheus", "datadog", "none"]
+    message: "Monitoring tool must be either 'prometheus', 'datadog', or 'none'."
+
+  # Rule for Prometheus configuration
+  - name: "Ensure Prometheus Enabled for Prometheus Tool"
+    match:
+      kind: ValuesFile
+    conditions:
+      - path: monitoring.tool
+        operator: equals
+        value: "prometheus"
+      - path: prometheus.enabled
+        operator: exists
+        value: true
+    message: "Prometheus configuration must be enabled when monitoring tool is set to 'prometheus'."
+
+  # Rule for Datadog API key and App key
+  - name: "Ensure Datadog API and App Key"
+    match:
+      kind: ValuesFile
+    conditions:
+      - path: monitoring.tool
+        operator: equals
+        value: "datadog"
+      - path: datadog.apiKey
+        operator: exists
+      - path: datadog.appKey
+        operator: exists
+    message: "Datadog API and App keys must be provided when 'datadog' is selected."
+
+  # Rule for DaemonSet resource limits and requests
+  - name: "Ensure DaemonSet Resource Limits"
+    match:
+      kind: DaemonSet
+    conditions:
+      - path: spec.template.spec.containers[*].resources.limits.memory
+        operator: exists
+      - path: spec.template.spec.containers[*].resources.requests.cpu
+        operator: exists
+    message: "DaemonSet containers must define memory limits and CPU requests."
+
+  # Rule for Prometheus alert thresholds in PrometheusRule template
+  - name: "Validate Prometheus Alert Thresholds"
+    match:
+      kind: PrometheusRule
+    conditions:
+      - path: spec.groups[*].rules[*].expr
+        operator: exists
+    message: "Prometheus alert rules must define expressions for alert thresholds."
+
+  # Rule for Datadog metrics configuration in ConfigMap
+  - name: "Ensure Datadog Metrics Prefix"
+    match:
+      kind: ConfigMap
+    conditions:
+      - path: data.datadog.yaml
+        operator: exists
+      - path: data.datadog.yaml
+        operator: regex_match
+        value: "metrics_prefix"
+    message: "Datadog metrics configuration must include a metrics prefix."
+
+  # Rule for RBAC settings
+  - name: "Ensure RBAC Role and RoleBinding"
+    match:
+      kind: Role
+    conditions:
+      - path: rules[*].resources
+        operator: in
+        value: ["pods", "nodes", "persistentvolumes", "persistentvolumeclaims"]
+    message: "RBAC roles must allow access to Pods, Nodes, and Persistent Volumes."
+
+  # Rule for ensuring ServiceAccount in DaemonSet
+  - name: "Ensure DaemonSet ServiceAccount"
+    match:
+      kind: DaemonSet
+    conditions:
+      - path: spec.template.spec.serviceAccountName
+        operator: exists
+    message: "DaemonSet must specify a valid ServiceAccount."

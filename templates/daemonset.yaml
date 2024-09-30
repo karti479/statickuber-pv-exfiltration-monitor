@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: pv-monitor-daemon
+  namespace: {{ .Values.rbac.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: pv-monitor
+  template:
+    metadata:
+      labels:
+        app: pv-monitor
+    spec:
+      serviceAccountName: {{ .Values.rbac.serviceAccountName }}
+      containers:
+        - name: ebpf-monitor
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/bash", "-c", "/usr/local/bin/monitor-ebpf.sh"]
+          volumeMounts:
+            - name: ebpf-scripts
+              mountPath: /etc/ebpf
+            - name: host-fs
+              mountPath: /mnt/data
+          resources:
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+      volumes:
+        - name: ebpf-scripts
+          configMap:
+            name: ebpf-scripts-config
+        - name: host-fs
+          hostPath:
+            path: /

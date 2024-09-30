@@ -1,0 +1,44 @@
+# Image configuration
+image:
+  repository: "your-dockerhub-username/your-ebpf-monitor-image"
+  tag: "latest"
+  pullPolicy: "IfNotPresent"
+
+# Monitoring tool selection: prometheus, datadog, none
+monitoring:
+  tool: "prometheus"  # Options: prometheus, datadog, none
+
+# Prometheus configuration
+prometheus:
+  enabled: true
+  scrapeInterval: "30s"
+  alertThresholds:
+    dataTransferLimit: 1000000000  # 1GB in bytes
+    unauthorizedFileAccessLimit: 0  # Trigger on unauthorized access
+
+# Datadog configuration
+datadog:
+  enabled: false
+  apiKey: "your-datadog-api-key"
+  appKey: "your-datadog-app-key"
+  metricsPrefix: "pv_monitoring."
+
+# Fallback to file-based logging
+logging:
+  enabled: true
+  logFilePath: "/var/log/pv-exfiltration-monitor.log"
+
+# Resources for the DaemonSet
+resources:
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+
+# RBAC settings
+rbac:
+  create: true
+  serviceAccountName: "pv-monitor-sa"
+  namespace: "default"

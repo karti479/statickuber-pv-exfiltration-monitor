@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+      "monitoring": {
+        "type": "object",
+        "properties": {
+          "tool": {
+            "type": "string",
+            "enum": ["prometheus", "datadog", "none"],
+            "description": "Select the monitoring tool (prometheus, datadog, or none)",
+            "default": "prometheus"
+          }
+        }
+      },
+      "rbac": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace where resources will be deployed"
+          },
+          "serviceAccountName": {
+            "type": "string",
+            "description": "Name of the ServiceAccount"
+          }
+        }
+      }
+    },
+    "required": ["monitoring", "rbac"]
+  }
+  

@@ -1,0 +1,13 @@
+{{- if eq .Values.monitoring.tool "datadog" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: datadog-config
+  namespace: {{ .Values.rbac.namespace }}
+data:
+  datadog.yaml: |
+    api_key: {{ .Values.datadog.apiKey }}
+    app_key: {{ .Values.datadog.appKey }}
+    logs_enabled: true
+    metrics_prefix: {{ .Values.datadog.metricsPrefix }}
+{{- end }}

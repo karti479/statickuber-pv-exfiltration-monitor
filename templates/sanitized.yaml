@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: pv-monitor-daemon
+  namespace: 
+spec:
+  selector:
+    matchLabels:
+      app: pv-monitor
+  template:
+    metadata:
+      labels:
+        app: pv-monitor
+    spec:
+      serviceAccountName: 
+      containers:
+        - name: ebpf-monitor
+          image: ":"
+          imagePullPolicy: 
+          command: ["/bin/bash", "-c", "/usr/local/bin/monitor-ebpf.sh"]
+          volumeMounts:
+            - name: ebpf-scripts
+              mountPath: /etc/ebpf
+            - name: host-fs
+              mountPath: /mnt/data
+          resources:
+            limits:
+              memory: ""
+              cpu: ""
+            requests:
+              memory: ""
+              cpu: ""
+      volumes:
+        - name: ebpf-scripts
+          configMap:
+            name: ebpf-scripts-config
+        - name: host-fs
+          hostPath:
+            path: /
