@@ -1,6 +1,6 @@
 # Image configuration
 image:
-  repository: "your-dockerhub-username/your-ebpf-monitor-image"
+  repository: "kartiksingh01/statickuber-pv-exfiltration-monitor-image"
   tag: "latest"
   pullPolicy: "IfNotPresent"
 

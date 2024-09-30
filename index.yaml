@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  pv-exfiltration-monitor:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2024-09-30T14:00:50.914778505Z"
+    description: A Helm chart for Persistent Volume Exfiltration Monitoring using
+      eBPF
+    digest: 9ab7319d9c9a13f653c07e7ba8138c513d706b672f7303aac1af917bb177d8f4
+    name: pv-exfiltration-monitor
+    urls:
+    - https://github.com/karti479/statickuber-pv-exfiltration-monitor.git/pv-exfiltration-monitor-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-09-30T14:00:50.913624389Z"
