@@ -13,8 +13,8 @@ if [ ! -d "$MOUNT_PATH" ]; then
     exit 1
 fi
 
-# Correct string comparison in bpftrace
-bpftrace -e 'tracepoint:syscalls:sys_enter_openat /str(args->filename)[0:9] == "/mnt/data"/ {
+# Use strncmp to compare the first 9 characters of the filename
+bpftrace -e 'tracepoint:syscalls:sys_enter_openat /strncmp(str(args->filename), "/mnt/data", 9) == 0/ {
     printf("File opened: %s\n", str(args->filename));
 }' || { echo "Error: bpftrace execution failed."; exit 1; }
 
