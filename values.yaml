@@ -31,11 +31,12 @@ logging:
 # Resources for the DaemonSet
 resources:
   limits:
-    memory: "512Mi"  # Memory with units like Mi, Gi
-    cpu: "500m"      # CPU in millicores
+    memory: "512Mi"
+    cpu: "500m"
   requests:
     memory: "256Mi"
     cpu: "250m"
+
 # RBAC settings
 rbac:
   create: true

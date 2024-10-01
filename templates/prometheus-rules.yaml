@@ -14,14 +14,15 @@ spec:
           labels:
             severity: critical
           annotations:
-            summary: "High data transfer detected on {{ $labels.volume }}"
-            description: "Volume {{ $labels.volume }} has transferred over 1GB in 5 minutes."
+            summary: "High data transfer detected"
+            description: "A persistent volume has transferred over the threshold in the last 5 minutes."
         - alert: UnauthorizedFileTypeAccess
           expr: count_over_time(pv_unauthorized_file_access_total[5m]) > {{ .Values.prometheus.alertThresholds.unauthorizedFileAccessLimit }}
           for: 1m
           labels:
             severity: high
           annotations:
-            summary: "Unauthorized file type accessed on {{ $labels.volume }}"
-            description: "An unauthorized file type was accessed on volume {{ $labels.volume }}."
+            summary: "Unauthorized file type access detected"
+            description: "An unauthorized file type was accessed on a persistent volume."
 {{- end }}
+
